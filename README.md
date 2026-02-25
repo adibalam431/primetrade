@@ -220,3 +220,74 @@ Middleware behavior:
 - Verifies access token
 - Attaches `userId` to request
 - Rejects invalid or expired tokens with 401
+
+---
+
+## Task Model
+
+Each task contains:
+
+- title (String, required)
+- completed (Boolean, default: false)
+- userId (ObjectId reference to User)
+- timestamps (createdAt, updatedAt)
+
+All task queries are filtered strictly by `userId` extracted from verified JWT.
+
+This prevents cross-user data access.
+
+
+---
+
+## Task Service Security
+
+All CRUD operations enforce strict user isolation.
+
+Every database query includes:
+
+- `_id`
+- `userId`
+
+This ensures:
+
+- No cross-user access
+- No task enumeration vulnerability
+- No reliance on client-sent userId
+
+User identity is derived exclusively from verified JWT middleware.
+
+---
+
+## Task API Endpoints
+
+Base: `/api/tasks`
+
+All routes require valid access token.
+
+### Endpoints
+
+- GET `/` → Get all tasks (user-scoped)
+- POST `/` → Create task
+- PUT `/:id` → Update task (user-scoped)
+- DELETE `/:id` → Delete task (user-scoped)
+
+All queries enforce strict user isolation using `userId` from verified JWT.
+
+---
+
+## Validation & Rate Limiting
+
+Input validation is implemented using `express-validator`.
+
+Validated routes:
+- Register
+- Login
+
+Validation ensures:
+- Proper email format
+- Required fields
+- Minimum password length
+
+Rate limiting is applied to `/api/auth` routes:
+- 50 requests per 15 minutes per IP
+- Protects against brute-force login attempts

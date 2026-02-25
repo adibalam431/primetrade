@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.routes");
+const taskRoutes = require("./routes/task.routes");
 
 const app = express();
 
@@ -17,7 +18,15 @@ app.use(
   })
 );
 
-app.use("/api/auth", authRoutes);
+const rateLimit = require("express-rate-limit");
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+});
+
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");
