@@ -291,3 +291,19 @@ Validation ensures:
 Rate limiting is applied to `/api/auth` routes:
 - 50 requests per 15 minutes per IP
 - Protects against brute-force login attempts
+
+---
+
+## Production Security Configuration
+
+Cookie configuration adapts to environment:
+
+- `secure: true` in production (HTTPS only)
+- `sameSite: none` for cross-origin production
+- `sameSite: lax` for local development
+
+CORS origin is configurable using:
+
+CLIENT_URL environment variable
+
+This allows safe deployment without hardcoded origins.
