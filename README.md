@@ -1,4 +1,4 @@
-# Scalable Web App – Frontend Architecture
+# Frontend Architecture
 
 ## Tech Stack
 
