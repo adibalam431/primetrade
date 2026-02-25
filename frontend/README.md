@@ -11,22 +11,18 @@
 ---
 
 ## Folder Structure
-src/
-├── api/
-│ └── axios.js
-├── component/
-│ ├── layout/
-│ │ └── DashboardLayout.jsx
-│ └── ProtectedRoute.jsx
-├── context/
-│ └── AuthContext.jsx
-├── pages/
-│ ├── Login.jsx
-│ ├── Register.jsx
-│ ├── Dashboard.jsx
-│ └── Tasks.jsx
-├── App.jsx
-└── main.jsx
+| Directory / File |
+| :--- |
+| **`src/main.jsx`** |
+| **`src/App.jsx`** |
+| **`src/api/axios.js`** |
+| **`src/context/AuthContext.jsx`** |
+| **`src/pages/Login.jsx`** |
+| **`src/pages/Register.jsx`** |
+| **`src/pages/Dashboard.jsx`** |
+| **`src/pages/Tasks.jsx`** |
+| **`src/component/layout/DashboardLayout.jsx`** |
+| **`src/component/ProtectedRoute.jsx`** |
 
 
 ---
