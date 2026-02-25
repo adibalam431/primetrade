@@ -8,34 +8,39 @@ import ProtectedRoute from "./component/ProtectedRoute";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+    <AppBackground>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-      {/* Protected routes (temporary unprotected for now) */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/dashboard/tasks" element={<Tasks />} />
+        {/* Protected routes (temporary unprotected for now) */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/dashboard/tasks" element={<Tasks />} />
 
-      {/* Nested dashboard */}
-      <Route path="/dashboard"element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }>
-        <Route index element={<Dashboard />} />
-        <Route path="tasks" element={<Tasks />} />
-      </Route>
+        {/* Nested dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="tasks" element={<Tasks />} />
+        </Route>
 
-      <Route path="*" element={<div>404 Not Found</div>} />
-    </Routes>
+        <Route path="*" element={<div>404 Not Found</div>} />
+      </Routes>
+    </AppBackground>
   );
 }
 

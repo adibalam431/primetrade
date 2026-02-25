@@ -1,1 +1,73 @@
 @import "tailwindcss";
+
+/* ---------- Theme Tokens ---------- */
+
+@theme {
+  --color-primary-500: #6366f1;
+  --color-primary-600: #7c3aed;
+  --color-accent-500: #22d3ee;
+
+  --glass-bg: rgba(255, 255, 255, 0.08);
+
+  --gradient-main: linear-gradient(
+    135deg,
+    #4f46e5 0%,
+    #7c3aed 50%,
+    #9333ea 100%
+  );
+
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.05)
+  );
+
+  --gradient-shimmer: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+}
+
+/* ---------- Base Styles ---------- */
+
+body {
+  min-height: 100vh;
+  background: var(--gradient-main);
+  color: white;
+  background-attachment: fixed;
+}
+
+/* Noise Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* ---------- Utilities ---------- */
+
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility shimmer {
+  background: var(--gradient-shimmer);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

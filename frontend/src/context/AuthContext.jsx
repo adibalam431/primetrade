@@ -1,6 +1,5 @@
 import { createContext, useState, useContext } from "react";
 import axios from "axios";
-import { setAccessToken } from "../api/axios";
 import { setAccessToken, setLogoutHandler } from "../api/axios";
 
 const AuthContext = createContext(null);
