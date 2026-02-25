@@ -307,3 +307,22 @@ CORS origin is configurable using:
 CLIENT_URL environment variable
 
 This allows safe deployment without hardcoded origins.
+
+---
+
+## Backend Status
+
+The backend now includes:
+
+- JWT authentication (access + refresh)
+- HTTP-only cookie refresh strategy
+- Token rotation logic
+- Protected route middleware
+- User-scoped CRUD operations
+- Input validation
+- Rate limiting
+- Environment-based security configuration
+
+The architecture follows layered separation:
+
+- Routes → Controllers → Services → Models
