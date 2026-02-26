@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import DashboardLayout from "./component/layout/DashboardLayout";
 import ProtectedRoute from "./component/ProtectedRoute";
+import AppBackground from "./component/backgroung/AppBackground";
 
 function App() {
   return (
