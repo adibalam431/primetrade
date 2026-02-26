@@ -30,7 +30,6 @@ function Tasks() {
 
   const handleCreate = async () => {
     if (!title.trim()) return;
-
     try {
       setCreating(true);
       const res = await axiosInstance.post("/tasks", { title });
