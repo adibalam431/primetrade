@@ -46,6 +46,34 @@ function Tasks() {
     }
   };
 
+  const handleToggle = async (task) => {
+  try {
+    const res = await axiosInstance.put(`/tasks/${task._id}`, {
+      completed: !task.completed,
+    });
+
+    setTasks((prev) =>
+      prev.map((t) =>
+        t._id === task._id ? res.data : t
+      )
+    );
+  } catch {
+    console.error("Toggle failed");
+  }
+};
+
+const handleDelete = async (id) => {
+  try {
+    await axiosInstance.delete(`/tasks/${id}`);
+
+    setTasks((prev) =>
+      prev.filter((t) => t._id !== id)
+    );
+  } catch {
+    console.error("Delete failed");
+  }
+};
+
   return (
     <div className="relative">
       {/* Floating Add Button */}
@@ -76,14 +104,37 @@ function Tasks() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <GlassCard>
-                <h2 className="text-lg font-semibold mb-2">
-                  {task.title}
-                </h2>
-                <p className="opacity-70 text-sm">
-                  {task.completed ? "Completed" : "Pending"}
-                </p>
-              </GlassCard>
+              <GlassCard className="group hover:shadow-glow transition">
+  <div className="flex justify-between items-start">
+    <h2
+      className={`text-lg font-semibold mb-2 ${
+        task.completed ? "line-through opacity-60" : ""
+      }`}
+    >
+      {task.title}
+    </h2>
+
+    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition">
+      <button
+        onClick={() => handleToggle(task)}
+        className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20"
+      >
+        ✓
+      </button>
+
+      <button
+        onClick={() => handleDelete(task._id)}
+        className="text-xs px-2 py-1 rounded bg-red-500/20 hover:bg-red-500/40"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <p className="opacity-70 text-sm">
+    {task.completed ? "Completed" : "Pending"}
+  </p>
+</GlassCard>
             </motion.div>
           ))}
         </div>
