@@ -1,26 +1,39 @@
-import axiosInstance from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import GlassCard from "../component/ui/GlassCard";
 
 function Dashboard() {
-  const { login } = useAuth();
-
-  const testLogin = () => {
-    login("test-token", { name: "Adib" });
-  };
-
-  const testRequest = async () => {
-    try {
-      await axiosInstance.get("/test");
-    } catch (err) {
-      console.log("Request sent with token");
-    }
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="p-10">
-      <button onClick={testLogin}>Set Token</button>
-      <button onClick={testRequest}>Send Request</button>
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <GlassCard>
+        <h2 className="text-lg font-semibold mb-2">
+          Welcome
+        </h2>
+        <p className="opacity-70">
+          {user?.name || "User"}
+        </p>
+      </GlassCard>
+
+      <GlassCard>
+        <h2 className="text-lg font-semibold mb-2">
+          Productivity
+        </h2>
+        <p className="opacity-70">
+          Stay focused. Complete your tasks.
+        </p>
+      </GlassCard>
+
+      <GlassCard>
+        <h2 className="text-lg font-semibold mb-2">
+          Secure Session
+        </h2>
+        <p className="opacity-70">
+          JWT protected dashboard.
+        </p>
+      </GlassCard>
     </div>
   );
 }
+
 export default Dashboard;

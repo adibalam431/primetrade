@@ -47,32 +47,26 @@ function Tasks() {
   };
 
   const handleToggle = async (task) => {
-  try {
-    const res = await axiosInstance.put(`/tasks/${task._id}`, {
-      completed: !task.completed,
-    });
+    try {
+      const res = await axiosInstance.put(`/tasks/${task._id}`, {
+        completed: !task.completed,
+      });
 
-    setTasks((prev) =>
-      prev.map((t) =>
-        t._id === task._id ? res.data : t
-      )
-    );
-  } catch {
-    console.error("Toggle failed");
-  }
-};
+      setTasks((prev) => prev.map((t) => (t._id === task._id ? res.data : t)));
+    } catch {
+      console.error("Toggle failed");
+    }
+  };
 
-const handleDelete = async (id) => {
-  try {
-    await axiosInstance.delete(`/tasks/${id}`);
+  const handleDelete = async (id) => {
+    try {
+      await axiosInstance.delete(`/tasks/${id}`);
 
-    setTasks((prev) =>
-      prev.filter((t) => t._id !== id)
-    );
-  } catch {
-    console.error("Delete failed");
-  }
-};
+      setTasks((prev) => prev.filter((t) => t._id !== id));
+    } catch {
+      console.error("Delete failed");
+    }
+  };
 
   return (
     <div className="relative">
@@ -87,13 +81,17 @@ const handleDelete = async (id) => {
       {/* Task Grid */}
       {loading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : !tasks.length ? (
-        <div className="text-center opacity-70">
-          No tasks yet.
+        <div className="flex flex-col items-center justify-center py-20 text-center opacity-70">
+          <div className="text-6xl mb-4">🗂️</div>
+          <h2 className="text-xl font-semibold mb-2">No Tasks Yet</h2>
+          <p className="text-sm">
+            Click the + button to create your first task.
+          </p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -105,36 +103,36 @@ const handleDelete = async (id) => {
               transition={{ duration: 0.3 }}
             >
               <GlassCard className="group hover:shadow-glow transition">
-  <div className="flex justify-between items-start">
-    <h2
-      className={`text-lg font-semibold mb-2 ${
-        task.completed ? "line-through opacity-60" : ""
-      }`}
-    >
-      {task.title}
-    </h2>
+                <div className="flex justify-between items-start">
+                  <h2
+                    className={`text-lg font-semibold mb-2 ${
+                      task.completed ? "line-through opacity-60" : ""
+                    }`}
+                  >
+                    {task.title}
+                  </h2>
 
-    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition">
-      <button
-        onClick={() => handleToggle(task)}
-        className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20"
-      >
-        ✓
-      </button>
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                    <button
+                      onClick={() => handleToggle(task)}
+                      className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20"
+                    >
+                      ✓
+                    </button>
 
-      <button
-        onClick={() => handleDelete(task._id)}
-        className="text-xs px-2 py-1 rounded bg-red-500/20 hover:bg-red-500/40"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
+                    <button
+                      onClick={() => handleDelete(task._id)}
+                      className="text-xs px-2 py-1 rounded bg-red-500/20 hover:bg-red-500/40"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
 
-  <p className="opacity-70 text-sm">
-    {task.completed ? "Completed" : "Pending"}
-  </p>
-</GlassCard>
+                <p className="opacity-70 text-sm">
+                  {task.completed ? "Completed" : "Pending"}
+                </p>
+              </GlassCard>
             </motion.div>
           ))}
         </div>
@@ -150,9 +148,7 @@ const handleDelete = async (id) => {
             transition={{ duration: 0.3 }}
             className="fixed top-0 right-0 w-full sm:w-96 h-full glass shadow-glass p-6 z-50"
           >
-            <h2 className="text-xl font-semibold mb-6">
-              Create Task
-            </h2>
+            <h2 className="text-xl font-semibold mb-6">Create Task</h2>
 
             <div className="flex flex-col gap-4">
               <Input

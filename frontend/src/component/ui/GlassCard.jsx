@@ -6,7 +6,7 @@ function GlassCard({ children, className = "" }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`glass rounded-2xl shadow-glass p-6 ${className}`}
+      className={`glass rounded-2xl shadow-glass p-6 transition hover:shadow-glow ${className}`}
     >
       {children}
     </motion.div>
