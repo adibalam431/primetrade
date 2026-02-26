@@ -1,328 +1,212 @@
-# Frontend Architecture
+# Scalable Web App with Authentication & Dashboard
+
+A full-stack scalable web application featuring JWT-based authentication, protected routes, and a glassmorphism dashboard UI.
+
+---
 
 ## Tech Stack
 
+### Frontend
 - React (Vite)
-- TailwindCSS
-- React Router DOM
+- TailwindCSS v4 (CSS-first config)
+- Framer Motion
+- React Hook Form
 - Axios
-- Context API
 
----
-
-## Folder Structure
-| Directory / File |
-| :--- |
-| **`src/main.jsx`** |
-| **`src/App.jsx`** |
-| **`src/api/axios.js`** |
-| **`src/context/AuthContext.jsx`** |
-| **`src/pages/Login.jsx`** |
-| **`src/pages/Register.jsx`** |
-| **`src/pages/Dashboard.jsx`** |
-| **`src/pages/Tasks.jsx`** |
-| **`src/component/layout/DashboardLayout.jsx`** |
-| **`src/component/ProtectedRoute.jsx`** |
-
-
----
-
-## Routing Strategy
-
-Public Routes:
-- /login
-- /register
-
-Protected Routes:
-- /dashboard
-- /dashboard/tasks
-
-The dashboard uses nested routing with a shared layout component (`DashboardLayout`).
-
-Protected routes are wrapped using a `ProtectedRoute` component that checks authentication state before rendering.
-
----
-
-## Authentication Flow (Frontend)
-
-1. User logs in.
-2. Backend returns:
-   - Access token (short-lived)
-   - Refresh token (stored in HTTP-only cookie).
-3. Access token is stored in React state (memory only).
-4. Axios interceptor automatically attaches the access token to all API requests.
-5. If an API request returns 401:
-   - The interceptor calls `/auth/refresh`.
-   - A new access token is issued.
-   - The failed request is retried.
-6. If refresh fails:
-   - Global logout is triggered.
-   - User is redirected to login.
-
----
-
-## Token Storage Strategy
-
-Access Token:
-- Stored in memory (React state).
-- Not stored in localStorage or sessionStorage.
-
-Refresh Token:
-- Stored in HTTP-only cookie (managed by backend).
-- Sent automatically with requests using `withCredentials: true`.
-
----
-
-## Axios Architecture
-
-- Centralized Axios instance (`api/axios.js`).
-- Request interceptor attaches Authorization header.
-- Response interceptor handles:
-  - 401 retry logic.
-  - Single refresh queue control.
-  - Automatic logout on refresh failure.
-
-Infinite loop prevention is handled using:
-- `_retry` flag.
-- `isRefreshing` control flag.
-- Shared `refreshPromise`.
-
----
-
-## Security Decisions
-
-- No JWT storage in localStorage (prevents XSS token theft).
-- HTTP-only cookies for refresh tokens.
-- Centralized API layer.
-- Single refresh call during concurrent failures.
-- Automatic logout on refresh failure.
-- Clean separation between UI and API logic.
-
----
-
-## Current Status
-
-Frontend architecture is complete with:
-
-- Nested dashboard layout
-- Protected routing
-- Global authentication context
-- Centralized API layer
-- Token lifecycle management
-- Automatic refresh handling
-- Logout fallback on refresh failure
-
-
-# Backend Architecture
-
-## Tech Stack
-
+### Backend
 - Node.js
 - Express.js
 - MongoDB (Mongoose)
-- JWT (Access + Refresh)
+- JWT (Access + Refresh Token Strategy)
 - bcrypt
-- cookie-parser
-- helmet
-- cors
-- express-rate-limit
+- express-validator
+- rate-limiter
 
 ---
 
-## Folder Structure
+## Features
 
-| Directory / File |
-| :--- |
-| **`backend/src/config/`** |
-| **`backend/src/controllers/auth.controller.js`** |
-| **`backend/src/models/User.js`** |
-| **`backend/src/routes/auth.routes.js`** |
-| **`backend/src/middlewares/auth.middleware.js`** |
-| **`backend/src/services/auth.service.js`** |
-| **`backend/src/utils/jwt.js`** |
-| **`backend/src/app.js`** |
-| **`backend/server.js`** |
-| **`.env`** |
+### Authentication
+- Register / Login
+- JWT Access Token (short-lived)
+- Refresh Token (HTTP-only cookie)
+- Auto-refresh on app bootstrap
+- Secure logout (token invalidation)
+- Protected routes
 
+### Dashboard
+- Glassmorphism UI design
+- Collapsible sidebar (desktop)
+- Slide-in mobile navigation
+- Animated transitions
+- Gradient shimmer skeleton loaders
+
+### Tasks Module
+- Create task (slide-in panel)
+- Toggle complete
+- Delete task
+- User-scoped data isolation
+- Optimistic UI updates
+- Responsive grid layout
+
+### Security
+- Password hashing (bcrypt)
+- JWT verification middleware
+- Refresh token stored securely
+- User isolation enforced in every query
+- Input validation
+- Rate limiting on auth routes
+- Environment-based cookie security
+- CORS configuration
 
 ---
 
-## Authentication Strategy
+## Project Structure
 
-### Access Token
+### Frontend
 
-- Expiry: 15 minutes
-- Stored in frontend memory
-- Sent in `Authorization: Bearer <token>`
-- Stateless (not stored in DB)
+```
+src/
+ ├── api/
+ ├── component/
+ │    ├── background/
+ │    ├── layout/
+ │    ├── ui/
+ ├── context/
+ ├── pages/
+```
 
-### Refresh Token
+### Backend
 
-- Expiry: 7 days
-- Stored in MongoDB (single active session per user)
-- Sent via HTTP-only cookie
-- Used to generate new access tokens
+```
+backend/
+ ├── src/
+ │    ├── controllers/
+ │    ├── services/
+ │    ├── models/
+ │    ├── routes/
+ │    ├── middlewares/
+ │    ├── utils/
+ │    └── app.js
+ ├── server.js
+```
+
+Architecture follows:
+
+Routes → Controllers → Services → Models
+
+---
+
+## Environment Variables
+
+### Backend `.env`
+
+```
+PORT=5000
+MONGO_URI=your_mongodb_uri
+JWT_ACCESS_SECRET=your_access_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+CLIENT_URL=http://localhost:5173
+```
+
+### Frontend `.env`
+
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+## How to Run Locally
+
+### 1. Clone repository
+
+```
+git clone <your_repo_url>
+```
+
+---
+
+### 2. Backend Setup
+
+```
+cd backend
+npm install
+npm run dev
+```
+
+---
+
+### 3. Frontend Setup
+
+```
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
 ## Authentication Flow
 
-### Register
-
-- Validate input
-- Hash password using bcrypt (12 rounds)
-- Store user
-- Return safe user object (no password)
-
-### Login
-
-- Validate credentials
-- Generate access + refresh tokens
-- Store refresh token in DB
-- Send refresh token as HTTP-only cookie
-- Return access token + user info
-
-### Refresh
-
-- Read refresh token from cookie
-- Verify token signature
-- Match with DB value
-- Generate new access token
-- Return new access token
-
-### Logout
-
-- Read refresh token from cookie
-- Remove it from DB
-- Clear cookie
+1. User logs in
+2. Backend issues:
+   - Access token (15m)
+   - Refresh token (7d, HTTP-only cookie)
+3. Access token stored in memory
+4. Axios attaches token automatically
+5. On page reload:
+   - Frontend calls `/auth/refresh`
+   - New access token issued
+6. Logout clears refresh token from DB
 
 ---
 
-## Security Decisions
+## Security Design
 
-- Passwords hashed with bcrypt (12 salt rounds)
-- JWT secrets stored in environment variables
-- Separate secrets for access and refresh tokens
-- HTTP-only cookies for refresh tokens
-- No password field returned in any response
-- Global error handler implemented
-- Auth middleware verifies tokens using jwt.verify()
-
----
-
-## Protected Routes
-
-Routes are protected using `auth.middleware.js`.
-
-Middleware behavior:
-
-- Extracts Bearer token from header
-- Verifies access token
-- Attaches `userId` to request
-- Rejects invalid or expired tokens with 401
+- Refresh tokens stored in DB (single-session strategy)
+- Access tokens are stateless
+- Every task query includes userId filter
+- No trust in client-provided identifiers
+- Input validation on auth endpoints
+- Rate limiting prevents brute-force attempts
 
 ---
 
-## Task Model
+## Scalability Considerations
 
-Each task contains:
-
-- title (String, required)
-- completed (Boolean, default: false)
-- userId (ObjectId reference to User)
-- timestamps (createdAt, updatedAt)
-
-All task queries are filtered strictly by `userId` extracted from verified JWT.
-
-This prevents cross-user data access.
-
+- Layered backend architecture
+- Environment-based configuration
+- Token rotation strategy
+- Stateless access token model
+- Modular UI component structure
+- Reusable design system (GlassCard, SkeletonCard, Input, Button)
 
 ---
 
-## Task Service Security
+## UI Design
 
-All CRUD operations enforce strict user isolation.
-
-Every database query includes:
-
-- `_id`
-- `userId`
-
-This ensures:
-
-- No cross-user access
-- No task enumeration vulnerability
-- No reliance on client-sent userId
-
-User identity is derived exclusively from verified JWT middleware.
+- Full-page frosted gradient background
+- Subtle noise texture overlay
+- Indigo/Purple primary palette
+- Cyan accent highlights
+- Medium motion animations (Framer Motion)
+- Slide-in panels for interaction
+- Skeleton shimmer loading states
 
 ---
 
-## Task API Endpoints
+## Future Improvements
 
-Base: `/api/tasks`
-
-All routes require valid access token.
-
-### Endpoints
-
-- GET `/` → Get all tasks (user-scoped)
-- POST `/` → Create task
-- PUT `/:id` → Update task (user-scoped)
-- DELETE `/:id` → Delete task (user-scoped)
-
-All queries enforce strict user isolation using `userId` from verified JWT.
+- Role-based access control
+- Pagination & filtering
+- Task search
+- Dark/Light theme toggle
+- Unit tests (Jest)
+- Dockerized deployment
 
 ---
 
-## Validation & Rate Limiting
+## Author
 
-Input validation is implemented using `express-validator`.
-
-Validated routes:
-- Register
-- Login
-
-Validation ensures:
-- Proper email format
-- Required fields
-- Minimum password length
-
-Rate limiting is applied to `/api/auth` routes:
-- 50 requests per 15 minutes per IP
-- Protects against brute-force login attempts
-
----
-
-## Production Security Configuration
-
-Cookie configuration adapts to environment:
-
-- `secure: true` in production (HTTPS only)
-- `sameSite: none` for cross-origin production
-- `sameSite: lax` for local development
-
-CORS origin is configurable using:
-
-CLIENT_URL environment variable
-
-This allows safe deployment without hardcoded origins.
-
----
-
-## Backend Status
-
-The backend now includes:
-
-- JWT authentication (access + refresh)
-- HTTP-only cookie refresh strategy
-- Token rotation logic
-- Protected route middleware
-- User-scoped CRUD operations
-- Input validation
-- Rate limiting
-- Environment-based security configuration
-
-The architecture follows layered separation:
-
-- Routes → Controllers → Services → Models
+Built as part of a scalable full-stack assignment project.
