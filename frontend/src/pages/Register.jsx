@@ -1,9 +1,36 @@
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import axiosInstance from "../api/axios";
 import GlassCard from "../component/ui/GlassCard";
 import Input from "../component/ui/Input";
 import Button from "../component/ui/Button";
 
 function Register() {
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      await axiosInstance.post("/auth/register", data);
+
+      navigate("/login");
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <motion.div
@@ -17,16 +44,22 @@ function Register() {
             Create Account
           </h1>
 
-          <form className="flex flex-col gap-4">
-            <Input label="Name" />
-            <Input label="Email" type="email" />
-            <Input label="Password" type="password" />
-            <Button>Register</Button>
-          </form>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
+            <Input label="Name" {...register("name")} />
+            <Input label="Email" type="email" {...register("email")} />
+            <Input label="Password" type="password" {...register("password")} />
 
-          <p className="text-sm opacity-70 mt-6 text-center">
-            Already have an account? Login
-          </p>
+            {error && (
+              <p className="text-red-400 text-sm">{error}</p>
+            )}
+
+            <Button disabled={loading}>
+              {loading ? "Creating..." : "Register"}
+            </Button>
+          </form>
         </GlassCard>
       </motion.div>
     </div>
