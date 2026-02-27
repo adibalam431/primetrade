@@ -1,9 +1,10 @@
-# Note: ## Main focus on Frontend Architecture not UI
+# Note: 
+## Main focus on Frontend Architecture not UI
 
 
-# Scalable Web App with Authentication & Dashboard
+# Web App with Authentication & Dashboard
 
-A full-stack scalable web application featuring JWT-based authentication, protected routes, and a glassmorphism dashboard UI.
+A full-stack web application featuring JWT-based authentication, protected routes, and a glassmorphism dashboard UI.
 
 ---
 
